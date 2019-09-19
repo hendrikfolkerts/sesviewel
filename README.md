@@ -1,5 +1,4 @@
 SESViewEl - System Entity Structure View Electron
---------------------------------------------------------------------------------------------------------------------------
 
 The software SESViewEl has been developed by the research group Computational
 Engineering and Automation (CEA) at Wismar University of Applied Sciences.
@@ -9,7 +8,6 @@ See the documentation of SESToPy for details on the description of the SES in th
 SESViewEl is developed with Node.js 10.15.3 and electron as UI.
 Visual Studio Code 1.38.0 is used as development editor.
 All dependencies and their versions can be seen in the package.json / package-lock.json .
---------------------------------------------------------------------------------------------------------------------------
 
 Execute
 Change into the directory of SESViewEl and execute
