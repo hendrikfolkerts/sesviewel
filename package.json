@@ -1,0 +1,37 @@
+{
+  "name": "SESViewEl",
+  "version": "1.0.0",
+  "description": "Developed with Node.js and electron as UI in Visual Studio Code.",
+  "main": "main.js",
+  "scripts": {
+    "postinstall": "install-app-deps",
+    "start": "electron .",
+    "pack": "build --dir",
+    "dist": "build"
+  },
+  "author": "Hendrik Folkerts, first version by Paul Buschow",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "4.0.4",
+    "electron-builder": "^20.38.5",
+    "electron-prebuilt": "^1.4.13",
+    "net": "^1.0.2"
+  },
+  "build": {
+    "appId": "id1",
+    "linux": {
+      "target": [
+        "AppImage",
+        "tar.gz"
+      ]
+    },
+    "win": {
+      "target": "NSIS"
+    }
+  },
+  "dependencies": {
+    "d3": "^5.9.2",
+    "dom-parser": "^0.1.6",
+    "net": "^1.0.2"
+  }
+}

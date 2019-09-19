@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>SESViewEl</title>
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  <body>
+    <p><center><h3>SESViewEl - System Entity Structure View in Node.js / Electron</h3></center></p>
+    <p align="right">A socket server is started on port 54545. SESToPy can connect to this server now. Exit the program here: <input name="exit" id="exit" type="button" size="20" value="Exit"></p>
+
+    <!--
+    We are using Node.js <script>document.write(process.versions.node)</script>,
+    Chromium <script>document.write(process.versions.chrome)</script>,
+    and Electron <script>document.write(process.versions.electron)</script>.
+    -->
+
+    <div style="display:inline-block;" id="globals"></div>
+  </body>
+
+  <script>
+    //requires for this file
+    //module provides an asynchronous network API
+    var net = require('net');
+    //module for the creation of an application
+    const remote = require('electron').remote;
+    //module for the libraries for printing the graph
+    var d3 = require("d3");
+    //script for creating d3 trees from the XML
+    var conv = require('./xml_converter');
+    //script for the presentation of the graph
+    var presenter  = require('./presentation')
+
+    //event listener on exit button
+    document.querySelector('#exit').addEventListener('click', exitFun);
+
+    //start the server
+    server();
+
+    //--------------------------------------------------------------------
+
+    //presentation with d3
+
+    //set the dimensions and margins of the diagram
+    var margin = {top: 60, right: 90, bottom: 30, left: 90},
+        width  = 1200 - margin.left - margin.right,
+        height = 800 - margin.top - margin.bottom;
+
+    //append the svg object to the body of the page
+    //appends a 'group' element to 'svg'
+    //moves the 'group' element to the top left margin
+    var svg = d3.select("body").append("svg")
+                .attr("width", width + margin.right + margin.left)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var div = d3.select("body").append("div")
+                .attr("class", "tooltip")
+                .style("display", "none");
+
+    // declares a tree layout and assigns the size
+    var treemap = d3.tree().size([width, height]);
+    //w and h are turned, since the presentation is turned
+
+    //--------------------------------------------------------------------
+
+    //presentation of the globals
+    function presGlob(sesvars, semcons) {
+      var show_globals = [];
+      show_globals.push('<table border=0>');
+        show_globals.push('<thead>');
+          show_globals.push('<tr><th align=left bgcolor=#AAAAAA>SES variables</th><th align=left bgcolor=#AAAAAA>semantic conditions</th></tr>');
+        show_globals.push('</thead>');
+        show_globals.push('<tbody>');
+          show_globals.push('<tr><td bgcolor=#AAAAAA>' + sesvars + '</td><td bgcolor=#AAAAAA>' + semcons +'</td></tr>');
+        show_globals.push('</tbody>');
+      show_globals.push('</table>');
+
+      var globEl = document.getElementById("globals");
+      globEl.innerHTML = show_globals;
+    }
+
+    //--------------------------------------------------------------------
+
+    function server() {
+      // Keep track of the clients
+      var clients = [];
+
+      // Start a TCP Server
+      net.createServer(function (socket) {
+
+        // Identify this client
+        socket.name = socket.remoteAddress + ":" + socket.remotePort;
+
+        // Put this new client in the list
+        clients.push(socket);
+
+        // Handle incoming messages from clients.
+        socket.on('data', function (data) {
+          //read question and create reply
+          var rcvstring = new TextDecoder("utf8").decode(data);  //decode
+          //execute xml tree to d3 tree conversion
+          var retval = conv.treeData(rcvstring);
+          var treeDat = retval[0];
+          var sesvars = retval[1];
+          var semcons = retval[2]; 
+          //execute script for presentation
+          presenter.createPicture(treeDat);
+          //execute function for presentation of the globals
+          presGlob(sesvars, semcons);
+        });
+
+        // Remove the client from the list when it leaves
+        socket.on('end', function () {
+          clients.splice(clients.indexOf(socket), 1);
+        });
+
+      }).listen(54545);
+    }
+
+    function exitFun() {
+        const remote = require('electron').remote;
+        let w = remote.getCurrentWindow();
+        w.close();
+    }
+
+  </script>
+  
+</html>
