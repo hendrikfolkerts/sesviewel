@@ -13,6 +13,7 @@ EXECUTE
 
 Change into the directory of SESViewEl and execute
 - npm install
+
 All necessary packages are installed.
 
 Then SESViewEl can be started with

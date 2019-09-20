@@ -33,6 +33,8 @@ exports.treeData = function getTheTree(xmlString) {
 	var dom = dom.getElementsByTagName('node')[0];
 	//console.log(dom)
 	
+	var nodeSpecificAttributes = [];
+	
 	//if the XML string is available, execute the function treebuildRecursive(...), otherwise load a pseudo tree -> root node is inserted here
 	if (dom != undefined){
 		//get attributes of first node
@@ -52,7 +54,11 @@ exports.treeData = function getTheTree(xmlString) {
 				infotext = getAttributeInfotext(childnodes[j], infotext);
 			}
 		}
-		return infotext.replace(/&quot;/g, '\"');
+		var returntext = infotext.replace(/&quot;/g, '\"');
+		if (returntext != "") {
+			nodeSpecificAttributes.push([childnodes[0].parentNode.attributes[1].value, returntext]);	//[name, atttributes]
+		}
+		return returntext;
 	}
 
 	function getInfotextAspect(childnodes) {
@@ -66,7 +72,11 @@ exports.treeData = function getTheTree(xmlString) {
 				infotext = getCouplingInfotext(childnodes[j], infotext);
 			}
 		}
-		return infotext.replace(/&quot;/g, '\"');
+		var returntext = infotext.replace(/&quot;/g, '\"');
+		if (returntext != "") {
+			nodeSpecificAttributes.push([childnodes[0].parentNode.attributes[1].value, returntext]);	//[name, atttributes]
+		}
+		return returntext;
 	}
 
 	function getInfotextSpecialization(childnodes) {
@@ -76,7 +86,11 @@ exports.treeData = function getTheTree(xmlString) {
 				infotext = getSpecializationruleInfotext(childnodes[j], infotext);
 			}
 		}
-		return infotext.replace(/&quot;/g, '\"');
+		var returntext = infotext.replace(/&quot;/g, '\"');
+		if (returntext != "") {
+			nodeSpecificAttributes.push([childnodes[0].parentNode.attributes[1].value, returntext]);	//[name, atttributes]
+		}
+		return returntext;
 	}
 
 	function getInfotextMultiAspect(childnodes) {
@@ -92,7 +106,11 @@ exports.treeData = function getTheTree(xmlString) {
 				infotext = getNumrepInfotext(childnodes[j], infotext);
 			}
 		}
-		return infotext.replace(/&quot;/g, '\"');
+		var returntext = infotext.replace(/&quot;/g, '\"');
+		if (returntext != "") {
+			nodeSpecificAttributes.push([childnodes[0].parentNode.attributes[1].value, returntext]);	//[name, atttributes]
+		}
+		return returntext;
 	}
 
 	function getAttributeInfotext(childnode, infotext) {
@@ -229,5 +247,5 @@ exports.treeData = function getTheTree(xmlString) {
 		//}
 		return children;
 	}
-	return [jtree, sesvars, semcons];
+	return [jtree, sesvars, semcons, nodeSpecificAttributes];
 }

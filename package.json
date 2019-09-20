@@ -1,5 +1,5 @@
 {
-  "name": "SESViewEl",
+  "name": "sesviewel",
   "version": "1.0.0",
   "description": "Developed with Node.js and electron as UI in Visual Studio Code.",
   "main": "main.js",

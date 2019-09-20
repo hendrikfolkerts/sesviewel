@@ -16,6 +16,8 @@
     -->
 
     <div style="display:inline-block;" id="globals"></div>
+    <input name="Show/Hide Node Attributes" id="showhidenodeattrib" type="button" size="20" value="Show/Hide Node Attributes" onclick="showNodeSpecAttrib();">
+    <div style="display:inline-block;" id="nodeSpecificAttributes"></div>
   </body>
 
   <script>
@@ -36,6 +38,10 @@
 
     //start the server
     server();
+
+    //set global variables
+    var show_allAttribString = "";
+    var nodesSpecAttribShown = false;
 
     //--------------------------------------------------------------------
 
@@ -68,7 +74,8 @@
     //presentation of the globals
     function presGlob(sesvars, semcons) {
       var show_globals = [];
-      show_globals.push('<table border=0>');
+      show_globals.push('<table style="display: inline-block"; border=1>');
+      //show_globals.push('<table style="float: left"; border=1>');
         show_globals.push('<thead>');
           show_globals.push('<tr><th align=left bgcolor=#AAAAAA>SES variables</th><th align=left bgcolor=#AAAAAA>semantic conditions</th></tr>');
         show_globals.push('</thead>');
@@ -77,8 +84,53 @@
         show_globals.push('</tbody>');
       show_globals.push('</table>');
 
+      var show_globalsString = "";
+      for (var i=0; i<show_globals.length; i++) {
+        show_globalsString = show_globalsString + show_globals[i];
+      }
+
       var globEl = document.getElementById("globals");
-      globEl.innerHTML = show_globals;
+      globEl.innerHTML = show_globalsString;
+    }
+
+    //presentation of the node specific attributes
+    function presNodeSpecAttr(nodeSpecificAttributes) {
+      var show_allAttrib = [];
+      for (var i=0; i<nodeSpecificAttributes.length; i++) {
+        var show_attrib = [];
+        show_attrib.push('<table style="display: inline-block"; border=1>');
+        //show_attrib.push('<table style="float: left"; border=1>');
+          show_attrib.push('<thead>');
+            show_attrib.push('<tr><th align=left bgcolor=#EEEEEE>Nodename</th><th align=left bgcolor=#EEEEEE>Attributes</th></tr>');
+          show_attrib.push('</thead>');
+          show_attrib.push('<tbody>');
+            show_attrib.push('<tr><td bgcolor=#EEEEEE>' + nodeSpecificAttributes[i][0] + '</td><td bgcolor=#EEEEEE>' + nodeSpecificAttributes[i][1] +'</td></tr>');
+          show_attrib.push('</tbody>');
+        show_attrib.push('</table>');
+
+        show_allAttrib.push(show_attrib);
+      }
+
+      show_allAttribArray = [];
+      for (var i=0; i<show_allAttrib.length; i++) {
+        show_allAttribArray = show_allAttribArray.concat(show_allAttrib[i]);
+      }
+
+      for (var i=0; i<show_allAttribArray.length; i++) {
+        show_allAttribString = show_allAttribString + show_allAttribArray[i];
+      }
+    }
+
+    function showNodeSpecAttrib() {
+      if (!nodesSpecAttribShown) {
+        var nsaEl = document.getElementById("nodeSpecificAttributes");
+        nsaEl.innerHTML = show_allAttribString;
+        nodesSpecAttribShown = true;
+      } else {
+        var nsaEl = document.getElementById("nodeSpecificAttributes");
+        nsaEl.innerHTML = "";
+        nodesSpecAttribShown = false;
+      } 
     }
 
     //--------------------------------------------------------------------
@@ -105,10 +157,13 @@
           var treeDat = retval[0];
           var sesvars = retval[1];
           var semcons = retval[2]; 
+          var nodeSpecificAttributes = retval[3];
           //execute script for presentation
           presenter.createPicture(treeDat);
           //execute function for presentation of the globals
           presGlob(sesvars, semcons);
+          //execute function for presentation of the node specific attributes
+          presNodeSpecAttr(nodeSpecificAttributes); 
         });
 
         // Remove the client from the list when it leaves
