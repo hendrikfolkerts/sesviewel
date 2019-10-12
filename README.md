@@ -1,26 +1,43 @@
 INTRODUCTION
 
-The software SESViewEl - System Entity Structure View Electron has been developed by the research group Computational
+The software SESMoPy has been developed by the research group Computational
 Engineering and Automation (CEA) at Wismar University of Applied Sciences.
-The app SESViewEl starts a socket server on port 54545.
-When a System Entity Structure (SES) coded as XML is sent to the server (e.g. from SESToPy), the SES is presented as tree.
-See the documentation of SESToPy for details on the description of the SES in the XML format.
-SESViewEl is developed with Node.js 10.15.3 and electron as UI.
-Visual Studio Code 1.38.0 is used as development editor.
-All dependencies and their versions can be seen in the package.json / package-lock.json .
+The software implements a modelbuilder according to the System Entity
+Structure / Model Base (SES/MB) infrastructure introduced for automatic
+execution of simulation experiments. The focus of the software is the model
+generation for different modelbuilders.
+Please read the documentation for further information. A comprehensive
+introduction to the SES/MB theory is given in the documentation of the SES
+modeling tool SESToPy.
+The software is written in Python3 with PyQt5 as user interface.
+It was tested with the simulation softwares Matlab R2018a (for Simulink),
+OpenModelica 1.12.0 and Dymola 2018.
+Furthermore it makes use of the FMU Compliance Checker developed by Modelon AB.
 
 EXECUTE
 
-Install Node.js, then change into the directory of SESViewEl and execute
-- npm install
+Copy the directory SESMoPy in your home folder, e.g. C:\Users\<Username>
+(necessary for usage of Dymola as simulator, otherwise Dymola cannot simulate).
+The program can be executed from source. Python3 with PyQt5 needs to be installed and the
+program can be started with the command:
+- in Windows: python main.py
+- in Linux: python3 main.py
 
-All necessary packages are installed.
+Versions built for Windows or Linux have an executable with the name "SESMoPy"
+in the program directory.
 
-Then SESViewEl can be started with
-- npm start
+CHANGELOG
 
-In case there is an error, please reinstall electron with the command
-- npm install electron --save-dev --save-exact
 
-SESViewEl can be built for a platform with the command
-- npm run dist
+ToDo, Known Bugs, Notes
+
+
+LICENSE
+
+
+HOW TO CITE
+
+Folkerts, H., Pawletta, T., Deatcu, C., and Hartmann, S. (2019). A Python Framework for
+Model Specification and Automatic Model Generation for Multiple Simulators. In: Proc. of
+ASIM Workshop 2019 - ARGESIM Report 57, ASIM Mitteilung AM 170. ARGESIM/ASIM Pub.
+TU Vienna, Austria, 02/2019, 69-75. (Print ISBN 978-3-901608-06-3)
