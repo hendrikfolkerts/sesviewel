@@ -15,9 +15,15 @@
     and Electron <script>document.write(process.versions.electron)</script>.
     -->
 
-    <div style="display:inline-block;" id="globals"></div>
-    <input name="Show/Hide Node Attributes" id="showhidenodeattrib" type="button" size="20" value="Show/Hide Node Attributes" onclick="showNodeSpecAttrib();">
-    <div style="display:inline-block;" id="nodeSpecificAttributes"></div>
+    <table style="display: inline-block"; border=0>
+      <tbody>
+        <tr valign="top">
+          <td><div style="display:inline-block;" id="globals"></div></td>
+          <td><input name="Show/Hide Node Attributes" id="showhidenodeattrib" type="button" size="20" value="Show/Hide Node Attributes" onclick="showNodeSpecAttrib();"></td>
+          <td><div style="display:inline-block;" id="nodeSpecificAttributes"></div></td>
+        </tr>
+      </tbody>
+    </table>
   </body>
 
   <script>
@@ -42,6 +48,15 @@
     //set global variables
     var show_allAttribString = "";
     var nodesSpecAttribShown = false;
+    var nSA = [];
+
+    //--------------------------------------------------------------------
+
+    //window resize event -> recalculate presentation of the node specific attributes
+    window.addEventListener('resize', function(e){
+      e.preventDefault();
+      presNodeSpecAttr(nSA);
+    })
 
     //--------------------------------------------------------------------
 
@@ -95,23 +110,101 @@
 
     //presentation of the node specific attributes
     function presNodeSpecAttr(nodeSpecificAttributes) {
-      var show_allAttrib = [];
-      for (var i=0; i<nodeSpecificAttributes.length; i++) {
-        var show_attrib = [];
-        show_attrib.push('<table style="display: inline-block"; border=1>');
-        //show_attrib.push('<table style="float: left"; border=1>');
-          show_attrib.push('<thead>');
-            show_attrib.push('<tr><th align=left bgcolor=#EEEEEE>Nodename</th><th align=left bgcolor=#EEEEEE>Attributes</th></tr>');
-          show_attrib.push('</thead>');
-          show_attrib.push('<tbody>');
-            show_attrib.push('<tr><td bgcolor=#EEEEEE>' + nodeSpecificAttributes[i][0] + '</td><td bgcolor=#EEEEEE>' + nodeSpecificAttributes[i][1] +'</td></tr>');
-          show_attrib.push('</tbody>');
-        show_attrib.push('</table>');
+      //write in global variable -> make a copy
+      nSA = JSON.parse(JSON.stringify(nodeSpecificAttributes));
+      show_allAttribString = "";
 
-        show_allAttrib.push(show_attrib);
+      //prepare -> <br /> to new array entry
+      for (var i=0; i<nodeSpecificAttributes.length; i++) {
+        nodeSpecificAttributes[i][1] = nodeSpecificAttributes[i][1].split("<br />");
+        nodeSpecificAttributes[i][1].splice(-1,1);
       }
 
-      show_allAttribArray = [];
+      //get the window size
+      var windowSize = remote.getCurrentWindow().webContents.getOwnerBrowserWindow().getBounds();
+      var width = windowSize.width;
+
+      //get the longest entry and the number of entries
+      var longestEntry = 0;
+      var numEntries = 0;
+      for (var i=0; i<nodeSpecificAttributes.length; i++) {
+        var nlen = nodeSpecificAttributes[i][0].length;        
+        numEntries = numEntries + nodeSpecificAttributes[i][1].length;
+        for (var j=0; j<nodeSpecificAttributes[i][1].length; j++) {
+          var elen = nodeSpecificAttributes[i][1][j].length;
+          if (nlen + elen > longestEntry) {
+            longestEntry = nlen + elen + 15;  //15 for the table and the space
+          }
+        }
+      }
+
+      //decide how many tables and how many attributes per table
+      var numTablesFit = Math.floor(width / (longestEntry * 8));  //8 because one letter is not one pixel
+      var attributesPerTable = Math.ceil(numEntries / numTablesFit);
+
+      //now create the tables
+      var tables = [];
+      var table = [];
+      var tabl = [];
+      var entryCount = 0;
+      for (var i=0; i<nodeSpecificAttributes.length; i++) {
+        if (entryCount < attributesPerTable) {
+          tabl.push(nodeSpecificAttributes[i][0]);
+          for (var j=0; j<nodeSpecificAttributes[i][1].length; j++) {
+            tabl.push(nodeSpecificAttributes[i][1][j]);
+            entryCount += 1;
+          }
+          table.push(tabl);
+          tabl = [];
+        } else {
+          tables.push(table);
+          table = [];
+          entryCount = 0;
+        }
+      }
+      if (table.length > 0) {
+        tables.push(table);
+      }
+      
+      //build the HTML code for the tables
+      var show_allAttrib = [];
+
+      show_allAttrib.push('<table style="display: inline-block"; border=0>');
+        show_allAttrib.push('<tbody>');
+          show_allAttrib.push('<tr valign="top">');
+
+            for (var i=0; i<tables.length; i++) {
+              show_allAttrib.push('<td>');
+              
+              var show_attrib = [];
+              show_attrib.push('<table style="display: inline-block"; border=1>');    //show_attrib.push('<table style="float: left"; border=1>');
+                show_attrib.push('<thead>');
+                  show_attrib.push('<tr><th align=left bgcolor=#EEEEEE>Nodename</th><th align=left bgcolor=#EEEEEE>Attributes</th></tr>');
+                show_attrib.push('</thead>');
+                for (var j=0; j<tables[i].length; j++) {
+                  show_attrib.push('<tbody>');
+                    var attrstring = "";
+                    for (var k=1; k<tables[i][j].length; k++) {
+                      if (attrstring != "") {
+                        attrstring = attrstring + "<br />" + tables[i][j][k];
+                      } else {
+                        attrstring = tables[i][j][k];
+                      }
+                    }
+                    show_attrib.push('<tr><td bgcolor=#EEEEEE>' + tables[i][j][0] + '</td><td bgcolor=#EEEEEE>' + attrstring +'</td></tr>');
+                  show_attrib.push('</tbody>');
+                }
+              show_attrib.push('</table>');
+
+              show_allAttrib.push(show_attrib);
+              show_allAttrib.push('</td>');
+            }
+
+          show_allAttrib.push('</tr>');
+        show_allAttrib.push('</tbody>');
+      show_allAttrib.push('</table>');
+
+      var show_allAttribArray = [];
       for (var i=0; i<show_allAttrib.length; i++) {
         show_allAttribArray = show_allAttribArray.concat(show_allAttrib[i]);
       }
@@ -119,6 +212,13 @@
       for (var i=0; i<show_allAttribArray.length; i++) {
         show_allAttribString = show_allAttribString + show_allAttribArray[i];
       }
+
+      //show on UI if it shall be shown
+      if (nodesSpecAttribShown) {
+        var nsaEl = document.getElementById("nodeSpecificAttributes");
+        nsaEl.innerHTML = show_allAttribString;
+      }
+      
     }
 
     function showNodeSpecAttrib() {

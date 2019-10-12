@@ -65,7 +65,7 @@ exports.treeData = function getTheTree(xmlString) {
 		var infotext = "";
 		for (var j=0; j<childnodes.length; j++) {
 			if (childnodes[j].nodeName == "aspr") {
-				infotext = getAspectruleInfotext(childnodes[j], infotext)
+				infotext = getAspectruleInfotext(childnodes[j], infotext);
 			} else if (childnodes[j].nodeName == "prio") {
 				infotext = getPriorityInfotext(childnodes[j], infotext);
 			} else if (childnodes[j].nodeName == "cplg") {
@@ -97,7 +97,7 @@ exports.treeData = function getTheTree(xmlString) {
 		var infotext = "";
 		for (var j=0; j<childnodes.length; j++) {
 			if (childnodes[j].nodeName == "aspr") {
-				infotext = getAspectruleInfotext(childnodes[j], infotext)
+				infotext = getAspectruleInfotext(childnodes[j], infotext);
 			} else if (childnodes[j].nodeName == "prio") {
 				infotext = getPriorityInfotext(childnodes[j], infotext);
 			} else if (childnodes[j].nodeName == "cplg") {
@@ -168,7 +168,7 @@ exports.treeData = function getTheTree(xmlString) {
 		return infotext;
 	}
 
-	//-----This is the function for walikng the tree-----
+	//-----This is the function for walking the tree-----
 
 	function treebuildRecursive(node) {
 		var counter = 0;

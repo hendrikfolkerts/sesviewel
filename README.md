@@ -11,7 +11,7 @@ All dependencies and their versions can be seen in the package.json / package-lo
 
 EXECUTE
 
-Change into the directory of SESViewEl and execute
+Install Node.js, then change into the directory of SESViewEl and execute
 - npm install
 
 All necessary packages are installed.
