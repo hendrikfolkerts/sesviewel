@@ -22,6 +22,11 @@
           <td><input name="Show/Hide Node Attributes" id="showhidenodeattrib" type="button" size="20" value="Show/Hide Node Attributes" onclick="showNodeSpecAttrib();"></td>
           <td><div style="display:inline-block;" id="nodeSpecificAttributes"></div></td>
         </tr>
+        <tr valign="top">
+          <td><label for="wico">Tree without Icons?</label><input type="checkbox" id="wico" name="wico" onclick="presTree();"></td>
+          <td><input name="Save Tree as SVG" id="savetree" type="button" size="20" value="Save Tree as SVG" onclick="saveTree();"></td>
+          <td><div style="display:inline-block;" id="saveinfo"></div></td>
+        </tr>
       </tbody>
     </table>
   </body>
@@ -38,6 +43,8 @@
     var conv = require('./xml_converter');
     //script for the presentation of the graph
     var presenter  = require('./presentation')
+    //for saving
+    var fs = require('fs');
 
     //event listener on exit button
     document.querySelector('#exit').addEventListener('click', exitFun);
@@ -49,6 +56,7 @@
     var show_allAttribString = "";
     var nodesSpecAttribShown = false;
     var nSA = [];
+    var treeDat = [];
 
     //--------------------------------------------------------------------
 
@@ -160,6 +168,7 @@
           tables.push(table);
           table = [];
           entryCount = 0;
+          i--;
         }
       }
       if (table.length > 0) {
@@ -233,6 +242,119 @@
       } 
     }
 
+    //presentation of the tree
+    function presTree() {
+      if (document.getElementById('wico').checked) {
+        presenter.createPicture(treeDat, true);
+      } else {
+        presenter.createPicture(treeDat);
+      }
+    }
+
+    //--------------------------------------------------------------------
+
+    //Get the graph as SVG string -> for saving
+    //Function from http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177
+    //getSVGString ( svgNode )
+    function getSVGString( svgNode ) {
+      svgNode.setAttribute('xlink', 'http://www.w3.org/1999/xlink');
+      var cssStyleText = getCSSStyles( svgNode );
+      appendCSS( cssStyleText, svgNode );
+
+      var serializer = new XMLSerializer();
+      var svgString = serializer.serializeToString(svgNode);
+      svgString = svgString.replace(/(\w+)?:?xlink=/g, 'xmlns:xlink='); // Fix root xlink without namespace
+      svgString = svgString.replace(/NS\d+:href/g, 'xlink:href'); // Safari NS namespace fix
+
+      return svgString;
+
+      function getCSSStyles( parentElement ) {
+        var selectorTextArr = [];
+
+        // Add Parent element Id and Classes to the list
+        selectorTextArr.push( '#'+parentElement.id );
+        for (var c = 0; c < parentElement.classList.length; c++)
+            if ( !contains('.'+parentElement.classList[c], selectorTextArr) )
+              selectorTextArr.push( '.'+parentElement.classList[c] );
+
+        // Add Children element Ids and Classes to the list
+        var nodes = parentElement.getElementsByTagName("*");
+        for (var i = 0; i < nodes.length; i++) {
+          var id = nodes[i].id;
+          if ( !contains('#'+id, selectorTextArr) )
+            selectorTextArr.push( '#'+id );
+
+          var classes = nodes[i].classList;
+          for (var c = 0; c < classes.length; c++)
+            if ( !contains('.'+classes[c], selectorTextArr) )
+              selectorTextArr.push( '.'+classes[c] );
+        }
+
+        // Extract CSS Rules
+        var extractedCSSText = "";
+        for (var i = 0; i < document.styleSheets.length; i++) {
+          var s = document.styleSheets[i];
+          
+          try {
+              if(!s.cssRules) continue;
+          } catch( e ) {
+                if(e.name !== 'SecurityError') throw e; // for Firefox
+                continue;
+              }
+
+          var cssRules = s.cssRules;
+          for (var r = 0; r < cssRules.length; r++) {
+            if ( contains( cssRules[r].selectorText, selectorTextArr ) )
+              extractedCSSText += cssRules[r].cssText;
+          }
+        }
+        
+
+        return extractedCSSText;
+
+        function contains(str,arr) {
+          return arr.indexOf( str ) === -1 ? false : true;
+        }
+
+      }
+
+      function appendCSS( cssText, element ) {
+        var styleElement = document.createElement("style");
+        styleElement.setAttribute("type","text/css"); 
+        styleElement.innerHTML = cssText;
+        var refNode = element.hasChildNodes() ? element.children[0] : null;
+        element.insertBefore( styleElement, refNode );
+      }
+    }
+
+    function saveTree(cont) {
+      //get the graph as SVG image
+      var svgS = getSVGString(d3.select('svg').node());
+      /* -> now replaced by showing the tree without icons
+      //remove the images from the SVG string, if asked for
+      if (document.getElementById('wico').checked) {
+        var svgS = svgS.replace(/\<image.*?\>/g,'')
+      }
+      */
+      //write the file, if it is not empty
+      var sainfo = document.getElementById("saveinfo");
+      if (svgS != '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" xmlns:xlink="http://www.w3.org/1999/xlink"><style xmlns="http://www.w3.org/1999/xhtml" type="text/css"></style><g transform="translate(90,60)"/></svg>') {
+        if (svgS != '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" xmlns:xlink="http://www.w3.org/1999/xlink"><style xmlns="http://www.w3.org/1999/xhtml" type="text/css"></style><g transform="translate(90,60)"><g class="node" transform="translate(510, 0)"><text dy=".35em" x="13" text-anchor="start">no_tree</text><image xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="entity.png" x="-12px" y="-12px" width="24px" height="24px"/></g></g></svg>') {
+          fs.writeFile("tree.svg", svgS, function(err) {
+            if(err) {
+              return console.log(err);
+              sainfo.innerHTML = "Not saved, error!";
+            }
+            sainfo.innerHTML = "The file 'tree.svg' was written in the program directory.";
+          });
+        } else {
+          sainfo.innerHTML = "Not saved, empty tree!";
+        }
+      } else {
+        sainfo.innerHTML = "Not saved, empty tree!";
+      }
+    }
+
     //--------------------------------------------------------------------
 
     function server() {
@@ -254,16 +376,20 @@
           var rcvstring = new TextDecoder("utf8").decode(data);  //decode
           //execute xml tree to d3 tree conversion
           var retval = conv.treeData(rcvstring);
-          var treeDat = retval[0];
+          treeDat = retval[0];
           var sesvars = retval[1];
           var semcons = retval[2]; 
           var nodeSpecificAttributes = retval[3];
           //execute script for presentation
-          presenter.createPicture(treeDat);
+          presTree();
           //execute function for presentation of the globals
           presGlob(sesvars, semcons);
           //execute function for presentation of the node specific attributes
-          presNodeSpecAttr(nodeSpecificAttributes); 
+          presNodeSpecAttr(nodeSpecificAttributes);
+          
+          //reset saveinfo
+          var sainfo = document.getElementById("saveinfo");
+          sainfo.innerHTML = "";
         });
 
         // Remove the client from the list when it leaves

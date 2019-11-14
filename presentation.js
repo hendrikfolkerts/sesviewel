@@ -1,4 +1,4 @@
-exports.createPicture = function Darstellung(treeData) {
+exports.createPicture = function presentation(treeData, withouticons=false) {
   d3.select("svg").remove();
 
   var svg = d3.select("body").append("svg")
@@ -61,27 +61,35 @@ exports.createPicture = function Darstellung(treeData) {
         .attr("transform", function(d) {return "translate(" + source.x0 + "," + source.y0 + ")";});
 
     // Add labels for the nodes
-    nodeEnter.append('text')
-        .attr("dy", ".35em")
-        .attr("x", function(d) {
-            return d.children || d._children ? -13 : 13;
-        })
-        .attr("text-anchor", function(d) {
-            return d.children || d._children ? "end" : "start";
-        })
-        .text(function(d) { return d.data.name; });
-
+    if (withouticons) {
+      nodeEnter.append('text')
+          .attr("dy", ".35em")
+          .attr("text-anchor", "middle")
+          .text(function(d) { return d.data.name; });
+    } else {
+      nodeEnter.append('text')
+          .attr("dy", ".35em")
+          .attr("x", function(d) {
+              return d.children || d._children ? -13 : 13;
+          })
+          .attr("text-anchor", function(d) {
+              return d.children || d._children ? "end" : "start";
+          })
+          .text(function(d) { return d.data.name; });
+    }
 
     // Replace d3's circles by pictures
-    nodeEnter.append("image")
-        .attr("xlink:href", function(d) { return d._children ? "test.png" : d.data.type + ".png"; })
-        .attr("x", "-12px")
-        .attr("y", "-12px")
-        .attr("width", "24px")
-        .attr("height","24px")
-        .on("mouseover", mouseover)			
-        .on("mousemove", mousemove)
-        .on("mouseout", mouseout);
+    if (!withouticons) {
+      nodeEnter.append("image")
+          .attr("xlink:href", function(d) { return d._children ? "test.png" : d.data.type + ".png"; })
+          .attr("x", "-12px")
+          .attr("y", "-12px")
+          .attr("width", "24px")
+          .attr("height","24px")
+          .on("mouseover", mouseover)			
+          .on("mousemove", mousemove)
+          .on("mouseout", mouseout);
+    }
 
     function mouseover() {
       if (this.__data__.data.info.length > 1) {

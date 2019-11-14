@@ -20,7 +20,7 @@ exports.treeData = function getTheTree(xmlString) {
 
 	var semconsnodes = dom.getElementsByTagName('semcons')[0];
 	var semcons = "";
-	for (var i=0; i<sesvarsnodes.childNodes.length; i++) {
+	for (var i=0; i<semconsnodes.childNodes.length; i++) {
 		if (semconsnodes.childNodes[i].nodeName == "semcon") {
 			var attrib = semconsnodes.childNodes[i].attributes;
 			if (semcons != "") {
