@@ -18,17 +18,23 @@
     <table style="display: inline-block"; border=0>
       <tbody>
         <tr valign="top">
-          <td><div style="display:inline-block;" id="globals"></div></td>
-          <td><input name="Show/Hide Node Attributes" id="showhidenodeattrib" type="button" size="20" value="Show/Hide Node Attributes" onclick="showNodeSpecAttrib();"></td>
-          <td><div style="display:inline-block;" id="nodeSpecificAttributes"></div></td>
-        </tr>
-        <tr valign="top">
           <td><label for="wico">Tree without Icons?</label><input type="checkbox" id="wico" name="wico" onclick="presTree();"></td>
           <td><input name="Save Tree as SVG" id="savetree" type="button" size="20" value="Save Tree as SVG" onclick="saveTree();"></td>
           <td><div style="display:inline-block;" id="saveinfo"></div></td>
         </tr>
+        <tr valign="top">
+          <td align="right">Choose Font Size/Weight for the Tree:</td>
+          <td align="left"><select id="fontsize" onclick="presTree();"></select><select id="fontweight" onclick="presTree();"><option value="normal">normal</option><option value="bold">bold</option></select></td>
+          <td></td>
+        </tr>
+        <tr valign="top">
+          <td><div style="display:inline-block;" id="globals"></div></td>
+          <td><input name="Show/Hide Node Attributes" id="showhidenodeattrib" type="button" size="20" value="Show/Hide Node Attributes" onclick="showNodeSpecAttrib();"></td>
+          <td><div style="display:inline-block;" id="nodeSpecificAttributes"></div></td>
+        </tr>
       </tbody>
     </table>
+    <div id="chart" align="center"></div>
   </body>
 
   <script>
@@ -75,16 +81,16 @@
         width  = 1200 - margin.left - margin.right,
         height = 800 - margin.top - margin.bottom;
 
-    //append the svg object to the body of the page
+    //append the svg object to the #chart area of the page
     //appends a 'group' element to 'svg'
     //moves the 'group' element to the top left margin
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("#chart").append("svg")     //d3.select("body").append(... would place the svg somewhere on the body of the page
                 .attr("width", width + margin.right + margin.left)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var div = d3.select("body").append("div")
+    var div = d3.select("#chart").append("div")   //if for the svg element "#chart" is replaced by "body" (see comment above), here "#chart must be replaced by "body" as well
                 .attr("class", "tooltip")
                 .style("display", "none");
 
@@ -93,6 +99,16 @@
     //w and h are turned, since the presentation is turned
 
     //--------------------------------------------------------------------
+
+    //populate selectfield for the font size
+    var sel = document.getElementById("fontsize");
+    for (var i=5; i<40; i++) {
+      var opt = document.createElement("option");
+      opt.value = i
+      opt.innerHTML = i.toString();
+      sel.appendChild(opt);
+    }
+    sel.selectedIndex = "5";
 
     //presentation of the globals
     function presGlob(sesvars, semcons) {
@@ -244,10 +260,13 @@
 
     //presentation of the tree
     function presTree() {
-      if (document.getElementById('wico').checked) {
-        presenter.createPicture(treeDat, true);
+      var wicoval = document.getElementById('wico').checked;
+      var sizeval = document.getElementById('fontsize').value;
+      var weightval = document.getElementById('fontweight').value;
+      if (wicoval) {
+        presenter.createPicture(treeDat, true, [sizeval, weightval]);
       } else {
-        presenter.createPicture(treeDat);
+        presenter.createPicture(treeDat, false, [sizeval, weightval]);
       }
     }
 

@@ -1,4 +1,4 @@
-exports.createPicture = function presentation(treeData, withouticons=false) {
+exports.createPicture = function presentation(treeData, withouticons=false, style=[10, "normal"]) {
   d3.select("svg").remove();
 
   var svg = d3.select("body").append("svg")
@@ -65,16 +65,30 @@ exports.createPicture = function presentation(treeData, withouticons=false) {
       nodeEnter.append('text')
           .attr("dy", ".35em")
           .attr("text-anchor", "middle")
+          .style("font-size", style[0].toString()+"px")
+          .style("font-weight", style[1])
+          //no icons, so the mouseover event needs to be added on the labels
+          .on("mouseover", mouseover)			
+          .on("mousemove", mousemove)
+          .on("mouseout", mouseout)
           .text(function(d) { return d.data.name; });
     } else {
       nodeEnter.append('text')
           .attr("dy", ".35em")
+          //label of inner nodes left of the node, label of leaf node right of the node 
           .attr("x", function(d) {
               return d.children || d._children ? -13 : 13;
           })
           .attr("text-anchor", function(d) {
               return d.children || d._children ? "end" : "start";
           })
+          //label of all nodes left of the node
+          /*
+          .attr("x", -13)
+          .attr("text-anchor", "end")
+          */ 
+          .style("font-size", style[0].toString()+"px")
+          .style("font-weight", style[1])
           .text(function(d) { return d.data.name; });
     }
 
