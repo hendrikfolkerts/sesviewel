@@ -30,6 +30,15 @@ exports.treeData = function getTheTree(xmlString) {
 		}
 	}
 
+	var selconsnodes = dom.getElementsByTagName('selcons')[0];
+	var selcons = [];
+	for (var i=0; i<selconsnodes.childNodes.length; i++) {
+		if (selconsnodes.childNodes[i].nodeName == "selcon") {
+			var attrib = selconsnodes.childNodes[i].attributes;
+			selcons.push([attrib[2].value, attrib[3].value, attrib[0].value]);
+		}
+	}
+
 	var dom = dom.getElementsByTagName('node')[0];
 	//console.log(dom)
 	
@@ -247,5 +256,5 @@ exports.treeData = function getTheTree(xmlString) {
 		//}
 		return children;
 	}
-	return [jtree, sesvars, semcons, nodeSpecificAttributes];
+	return [jtree, sesvars, semcons, selcons, nodeSpecificAttributes];
 }

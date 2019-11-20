@@ -63,6 +63,7 @@
     var nodesSpecAttribShown = false;
     var nSA = [];
     var treeDat = [];
+    var selcons = [];
 
     //--------------------------------------------------------------------
 
@@ -264,9 +265,9 @@
       var sizeval = document.getElementById('fontsize').value;
       var weightval = document.getElementById('fontweight').value;
       if (wicoval) {
-        presenter.createPicture(treeDat, true, [sizeval, weightval]);
+        presenter.createPicture(treeDat, true, [sizeval, weightval], selcons);
       } else {
-        presenter.createPicture(treeDat, false, [sizeval, weightval]);
+        presenter.createPicture(treeDat, false, [sizeval, weightval], selcons);
       }
     }
 
@@ -397,8 +398,9 @@
           var retval = conv.treeData(rcvstring);
           treeDat = retval[0];
           var sesvars = retval[1];
-          var semcons = retval[2]; 
-          var nodeSpecificAttributes = retval[3];
+          var semcons = retval[2];
+          selcons = retval[3]; 
+          var nodeSpecificAttributes = retval[4];
           //execute script for presentation
           presTree();
           //execute function for presentation of the globals

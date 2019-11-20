@@ -1,4 +1,4 @@
-exports.createPicture = function presentation(treeData, withouticons=false, style=[10, "normal"]) {
+exports.createPicture = function presentation(treeData, withouticons=false, style=[10, "normal"], selcons=[]) {
   d3.select("svg").remove();
 
   var svg = d3.select("body").append("svg")
@@ -60,6 +60,12 @@ exports.createPicture = function presentation(treeData, withouticons=false, styl
         .on('click', click)
         .attr("transform", function(d) {return "translate(" + source.x0 + "," + source.y0 + ")";});
 
+    /*
+    var color = d3.scaleOrdinal()
+        .domain(["nodename1", "nodename2", "nodename3", "nodename4"])
+        .range(["#000000","#ffffff","#999999","#BBBBBB"]);
+    */
+
     // Add labels for the nodes
     if (withouticons) {
       nodeEnter.append('text')
@@ -67,6 +73,22 @@ exports.createPicture = function presentation(treeData, withouticons=false, styl
           .attr("text-anchor", "middle")
           .style("font-size", style[0].toString()+"px")
           .style("font-weight", style[1])
+          .style('fill', (d) => {
+            var isInSelcons = false;
+            var k=0
+            while(k<selcons.length && !isInSelcons) {
+              if (selcons[k][0] == d.data.name || selcons[k][1] == d.data.name) {
+                isInSelcons = true;
+                k--;
+              }
+              k++;
+            }
+            if (isInSelcons) {
+              d.color = selcons[k][2];  //color(d.data.name); -> when using the color() function (commented out above)
+            } else {
+              d.color = "#000000";
+            }
+            return d.color;})
           //no icons, so the mouseover event needs to be added on the labels
           .on("mouseover", mouseover)			
           .on("mousemove", mousemove)
@@ -89,6 +111,22 @@ exports.createPicture = function presentation(treeData, withouticons=false, styl
           */ 
           .style("font-size", style[0].toString()+"px")
           .style("font-weight", style[1])
+          .style('fill', (d) => {
+            var isInSelcons = false;
+            var k=0
+            while(k<selcons.length && !isInSelcons) {
+              if (selcons[k][0] == d.data.name || selcons[k][1] == d.data.name) {
+                isInSelcons = true;
+                k--;
+              }
+              k++;
+            }
+            if (isInSelcons) {
+              d.color = selcons[k][2];  //color(d.data.name); -> when using the color() function (commented out above)
+            } else {
+              d.color = "#000000";
+            }
+            return d.color;})
           .text(function(d) { return d.data.name; });
     }
 
