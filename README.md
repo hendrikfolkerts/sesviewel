@@ -11,15 +11,15 @@ All dependencies and their versions can be seen in the package.json / package-lo
 
 EXECUTE
 
-Install Node.js, then change into the directory of SESViewEl and execute
+Install Node.js, open a shell, change at the shell into the directory of SESViewEl and execute the command
 - npm install
 
-All necessary packages are installed.
+All necessary packages are installed in the program directory of SESViewEl.
 
-Then SESViewEl can be started with
+Then SESViewEl can be started with the shell command
 - npm start
 
-In case there is an error, please reinstall electron with the command
+In case there is an error, please reinstall electron with the shell command
 - npm install electron --save-dev --save-exact
 
 SESViewEl can be built for a platform with the command
