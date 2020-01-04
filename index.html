@@ -7,7 +7,7 @@
   </head>
   <body>
     <p><center><h3>SESViewEl - System Entity Structure View in Node.js / Electron</h3></center></p>
-    <p align="right">A socket server is started on port 54545. SESToPy can connect to this server now. Exit the program here: <input name="exit" id="exit" type="button" size="20" value="Exit"></p>
+    <p align="right">A socket server is started on port 54545. SESToPy can connect to this server now. Save received string as XML file? <input type="checkbox" id="srs" name="srs" checked> - Exit the program here: <input name="exit" id="exit" type="button" size="20" value="Exit"></p>
 
     <!--
     We are using Node.js <script>document.write(process.versions.node)</script>,
@@ -394,6 +394,15 @@
         socket.on('data', function (data) {
           //read question and create reply
           var rcvstring = new TextDecoder("utf8").decode(data);  //decode
+          //save rcvstring as file
+          var srsval = document.getElementById('srs').checked;
+          if (srsval) {
+            fs.writeFile("received_XML_string.xml", rcvstring, function(err) {
+              if(err) {
+                return console.log(err);
+              }
+            });
+          }
           //execute xml tree to d3 tree conversion
           var retval = conv.treeData(rcvstring);
           treeDat = retval[0];
