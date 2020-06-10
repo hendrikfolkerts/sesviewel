@@ -4,6 +4,8 @@ The software SESViewEl - System Entity Structure View Electron has been develope
 Engineering and Automation (CEA) at Wismar University of Applied Sciences.
 The app SESViewEl starts a socket server on port 54545.
 When a System Entity Structure (SES) coded as XML is sent to the server (e.g. from SESToPy), the SES is presented as tree.
+The presented tree can be saved in the *.svg vector graphics format.
+Saved figures in the *.svg format can be manipulated e.g. with the GravitDesigner vector graphics program.
 See the documentation of SESToPy for details on the description of the SES in the XML format.
 SESViewEl is developed with Node.js 10.15.3 and electron as UI.
 Visual Studio Code 1.38.0 is used as development editor.
