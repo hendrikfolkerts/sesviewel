@@ -13,16 +13,27 @@ All dependencies and their versions can be seen in the package.json / package-lo
 
 EXECUTE
 
-Install Node.js, open a shell, change at the shell into the directory of SESViewEl and execute the command
-- npm install
+There are three ways to execute SESViewEl. The first two ways need Node.js to be installed in a compatible version
+(see text before), while the third way makes use of Docker.
 
-All necessary packages are installed in the program directory of SESViewEl.
-
-Then SESViewEl can be started with the shell command
+1st way (tested in Windows with Node.js 10.15.3): There is a file called "extract_here.zip" in the SESViewEl directory.
+Extract it in this directory (do not place it in a subdirectory) and a directory with the name "node_modules"
+is created. This directory contains all dependencies of SESViewEl in the correct versions.
+Open a shell and change at the shell into the directory of SESViewEl. SESViewEl can then be started with the shell command
 - npm start
 
-In case there is an error, please reinstall electron with the shell command
+2nd way: Dependencies are collected online before running SESViewEl. Therefore:
+
+1. Open a shell, change at the shell into the directory of SESViewEl and execute the commands
+- npm install
 - npm install electron --save-dev --save-exact
+
+2. Now that all necessary packages and electron are installed in the program directory of SESViewEl,
+SESViewEl can be started with the shell command
+- npm start
 
 SESViewEl can be built for a platform with the command
 - npm run dist
+
+3rd way: The program can be executed in a Docker container. Instructions are in the README file in the Docker
+directory of this program.
