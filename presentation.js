@@ -1,4 +1,4 @@
-exports.createPicture = function presentation(treeData, withouticons=false, style=[10, "normal"], selcons=[]) {
+exports.createPicture = function presentation(treeData, withouticons=false, style=[14, "normal"], selcons=[]) {
   d3.select("svg").remove();
 
   var svg = d3.select("body").append("svg")

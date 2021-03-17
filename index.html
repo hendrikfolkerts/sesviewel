@@ -65,39 +65,65 @@
     var treeDat = [];
     var selcons = [];
 
+    //prepare d3
+    var [margin, width, height, svg, div, treemap] = presd3(true);
+
     //--------------------------------------------------------------------
 
     //window resize event -> recalculate presentation of the node specific attributes
     window.addEventListener('resize', function(e){
       e.preventDefault();
       presNodeSpecAttr(nSA);
+      //do not execute on startup -> recalculate tree size on resize window
+      if (!isEmpty(treeDat)) {
+        [margin, width, height, svg, div, treemap] = presd3(false);
+        presTree();
+      }
     })
+
+    var isEmpty = function(obj) {
+      return Object.keys(obj).length === 0;
+    }
 
     //--------------------------------------------------------------------
 
     //presentation with d3
+    function presd3(firststart) {
+      //get window size
+      var windowSize = remote.getCurrentWindow().webContents.getOwnerBrowserWindow().getBounds();
 
-    //set the dimensions and margins of the diagram
-    var margin = {top: 60, right: 90, bottom: 30, left: 90},
-        width  = 1200 - margin.left - margin.right,
-        height = 800 - margin.top - margin.bottom;
+      //set the dimensions and margins of the diagram
+      var margin = {top: 60, right: 60, bottom: 30, left: 60},
+          width  = windowSize.width - margin.left - margin.right,
+          height = windowSize.height - margin.top - margin.bottom;
 
-    //append the svg object to the #chart area of the page
-    //appends a 'group' element to 'svg'
-    //moves the 'group' element to the top left margin
-    var svg = d3.select("#chart").append("svg")     //d3.select("body").append(... would place the svg somewhere on the body of the page
-                .attr("width", width + margin.right + margin.left)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      //get the chart HTML element
+      var chart = d3.select("#chart");
 
-    var div = d3.select("#chart").append("div")   //if for the svg element "#chart" is replaced by "body" (see comment above), here "#chart must be replaced by "body" as well
-                .attr("class", "tooltip")
-                .style("display", "none");
+      //remove svg element and div element when the graph needs to be redrawn (after resize event)
+      if (!firststart) {
+        chart.remove("svg").remove("div");
+      }
 
-    // declares a tree layout and assigns the size
-    var treemap = d3.tree().size([width, height]);
-    //w and h are turned, since the presentation is turned
+      //append the svg object to the #chart area of the page
+      //appends a 'group' element to 'svg'
+      //moves the 'group' element to the top left margin
+      var svg = chart.append("svg")     //d3.select("body").append(... would place the svg somewhere on the body of the page
+                  .attr("width", width + margin.right + margin.left)
+                  .attr("height", height + margin.top + margin.bottom)
+                  .append("g")
+                  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      var div = chart.append("div")   //if for the svg element "#chart" is replaced by "body" (see comment above), here "#chart must be replaced by "body" as well
+                  .attr("class", "tooltip")
+                  .style("display", "none");
+
+      // declares a tree layout and assigns the size
+      var treemap = d3.tree().size([width, height]);
+      //w and h are turned, since the presentation is turned
+
+      return [margin, width, height, svg, div, treemap];
+    }
 
     //--------------------------------------------------------------------
 
@@ -109,7 +135,7 @@
       opt.innerHTML = i.toString();
       sel.appendChild(opt);
     }
-    sel.selectedIndex = "5";
+    sel.selectedIndex = "9";
 
     //presentation of the globals
     function presGlob(sesvars, semcons) {
