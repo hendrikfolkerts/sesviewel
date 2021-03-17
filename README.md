@@ -2,7 +2,8 @@ INTRODUCTION
 
 The software SESViewEl - System Entity Structure View Electron has been developed by the research group Computational
 Engineering and Automation (CEA) at Wismar University of Applied Sciences.
-The app SESViewEl starts a socket server on port 54545.
+The app SESViewEl starts a socket server on port 54545. The socket server's IP-address can be retrieved with the shell
+command 'ipconfig' in Windows or 'ifconfig' in Linux.
 When a System Entity Structure (SES) coded as XML is sent to the server (e.g. from SESToPy), the SES is presented as tree.
 The presented tree can be saved in the *.svg vector graphics format.
 Saved figures in the *.svg format can be manipulated e.g. with the GravitDesigner vector graphics program.
