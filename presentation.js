@@ -21,7 +21,7 @@ exports.createPicture = function presentation(treeData, withouticons=false, styl
 
   //--------Functions----------------------------------------------------------------------------
 
-  // Collapse the node and all it's children
+  // Collapse the node and all its children
   function collapse(d) {
     if(d.children) {
       d._children = d.children

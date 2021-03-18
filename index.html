@@ -66,7 +66,7 @@
     var selcons = [];
 
     //prepare d3
-    var [margin, width, height, svg, div, treemap] = presd3(true);
+    var [margin, width, height, svg, div, treemap] = presd3(false);
 
     //--------------------------------------------------------------------
 
@@ -74,9 +74,10 @@
     window.addEventListener('resize', function(e){
       e.preventDefault();
       presNodeSpecAttr(nSA);
-      //do not execute on startup -> recalculate tree size on resize window
+      //recalculate tree size according to window size
+      [margin, width, height, svg, div, treemap] = presd3(true);
+      //do not execute on startup -> present recalculated tree size on resize window
       if (!isEmpty(treeDat)) {
-        [margin, width, height, svg, div, treemap] = presd3(false);
         presTree();
       }
     })
@@ -88,7 +89,7 @@
     //--------------------------------------------------------------------
 
     //presentation with d3
-    function presd3(firststart) {
+    function presd3(resizeevent) {
       //get window size
       var windowSize = remote.getCurrentWindow().webContents.getOwnerBrowserWindow().getBounds();
 
@@ -99,11 +100,6 @@
 
       //get the chart HTML element
       var chart = d3.select("#chart");
-
-      //remove svg element and div element when the graph needs to be redrawn (after resize event)
-      if (!firststart) {
-        chart.remove("svg").remove("div");
-      }
 
       //append the svg object to the #chart area of the page
       //appends a 'group' element to 'svg'
@@ -117,6 +113,12 @@
       var div = chart.append("div")   //if for the svg element "#chart" is replaced by "body" (see comment above), here "#chart must be replaced by "body" as well
                   .attr("class", "tooltip")
                   .style("display", "none");
+
+      //remove svg element and div element when the graph is redrawn (after resize event)
+      if (resizeevent) {
+        chart.select("svg").remove();
+        chart.select("div").remove();
+      }
 
       // declares a tree layout and assigns the size
       var treemap = d3.tree().size([width, height]);

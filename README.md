@@ -44,9 +44,6 @@ directory of this program.
 
 KNOWN BUGS, NOTES, TODO
 
-- Tooltips do not function any more when the program window is resized and an SES tree is loaded -> Maximize the SESViewEl
-window before loading an SES tree
-
 LICENSE
 
 This application is licensed under GNU GPLv3.
