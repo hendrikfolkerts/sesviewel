@@ -17,9 +17,9 @@ EXECUTE
 There are three ways to execute SESViewEl. In the first two ways SESViewEl is executed from source. Node.js needs to be
 installed in a compatible version (see text before). The third way makes use of Docker.
 
-1st way (tested in Windows with Node.js 10.15.3): There is a file called "extract_here.zip" in the SESViewEl directory.
-Extract it in this directory (do not place it in a subdirectory) and a directory with the name "node_modules"
-is created. This directory contains all dependencies of SESViewEl in the correct versions.
+1st way (only if a file called "extract_here.zip" is in the SESViewEl directory - tested in Windows with Node.js 10.15.3):
+Extract the file "extract_here.zip" in the SESViewEl directory (do not place it in a subdirectory) and a directory with the
+name "node_modules" is created. This directory contains all dependencies of SESViewEl in the correct versions.
 Open a shell and change at the shell into the directory of SESViewEl. SESViewEl can then be started with the shell command
 - npm start
 
