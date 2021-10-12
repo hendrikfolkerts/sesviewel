@@ -12,7 +12,7 @@
   "author": "Hendrik Folkerts, first version by Paul Buschow",
   "license": "ISC",
   "devDependencies": {
-    "electron": "4.0.4",
+    "electron": "11.5.0",
     "electron-builder": "^20.38.5",
     "electron-prebuilt": "^1.4.13",
     "net": "^1.0.2"
